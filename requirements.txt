@@ -10,4 +10,5 @@ python-dotenv
 pymupdf
 pypdf
 google-genai
+reportlab
 
