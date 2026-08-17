@@ -1,3 +1,4 @@
+```text
 streamlit
 langgraph
 langchain
@@ -8,4 +9,6 @@ fastapi
 uvicorn
 python-dotenv
 pymupdf
-langgraph
+pypdf
+google-genai
+```
