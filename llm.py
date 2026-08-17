@@ -1,5 +1,4 @@
 import os
-import time
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -57,59 +56,31 @@ def invoke_llm(prompt: str) -> str:
     if not prompt:
         return ""
 
-    max_retries = 3
+    try:
 
-    for attempt in range(max_retries):
+        print("[Gemini] Calling model...")
 
-        try:
+        response = client.models.generate_content(
+            model=MODEL_NAME,
+            contents=prompt
+        )
 
-            print(
-                f"\n[Gemini] Calling model "
-                f"(attempt {attempt + 1}/{max_retries})..."
-            )
+        if response is None:
+            return "LLM Error: Gemini returned an empty response."
 
-            response = client.models.generate_content(
-                model=MODEL_NAME,
-                contents=prompt
-            )
+        text = response.text
 
-            if response is None:
-                raise RuntimeError(
-                    "Gemini returned an empty response."
-                )
+        if text:
+            print("[Gemini] Response received successfully.")
+            return text.strip()
 
-            text = response.text
+        return "LLM Error: Gemini returned no text."
 
-            if text:
-                print("[Gemini] Response received successfully.")
-                return text.strip()
+    except Exception as e:
 
-            raise RuntimeError(
-                "Gemini returned no text."
-            )
+        error_message = str(e)
 
-        except Exception as e:
+        print("[Gemini] Error:")
+        print(error_message)
 
-            print(
-                f"\n[Gemini] Attempt {attempt + 1} failed:"
-            )
-            print(str(e))
-
-            if attempt < max_retries - 1:
-
-                wait_time = 2 ** attempt
-
-                print(
-                    f"[Gemini] Retrying in "
-                    f"{wait_time} seconds..."
-                )
-
-                time.sleep(wait_time)
-
-            else:
-
-                print(
-                    "\n[Gemini] All retry attempts failed."
-                )
-
-                return f"LLM Error: {str(e)}"
+        return f"LLM Error: {error_message}"
