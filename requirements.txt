@@ -1,4 +1,3 @@
-```text
 streamlit
 langgraph
 langchain
@@ -11,4 +10,4 @@ python-dotenv
 pymupdf
 pypdf
 google-genai
-```
+
