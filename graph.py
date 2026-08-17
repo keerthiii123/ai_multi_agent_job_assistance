@@ -1,0 +1,49 @@
+from langgraph.graph import StateGraph, START, END
+
+from state import AgentState
+
+from agents.planner import planner_agent
+from agents.resume_agent import resume_agent
+from agents.skill_agent import skill_agent
+from agents.interview_agent import interview_agent
+from agents.job_match_agent import job_match_agent
+from agents.final_agent import final_report_agent
+
+# Root folder la irukura file
+from resume_rewrite_agent import resume_rewrite_agent
+
+
+# =====================================================
+# BUILD GRAPH
+# =====================================================
+
+def build_graph():
+
+    workflow = StateGraph(AgentState)
+
+    # -------------------------------
+    # Add Nodes
+    # -------------------------------
+
+    workflow.add_node("planner", planner_agent)
+    workflow.add_node("resume_agent", resume_agent)
+    workflow.add_node("resume_rewrite_agent", resume_rewrite_agent)
+    workflow.add_node("skill_agent", skill_agent)
+    workflow.add_node("interview_agent", interview_agent)
+    workflow.add_node("job_match_agent", job_match_agent)
+    workflow.add_node("final_agent", final_report_agent)
+
+    # -------------------------------
+    # Workflow
+    # -------------------------------
+
+    workflow.add_edge(START, "planner")
+    workflow.add_edge("planner", "resume_agent")
+    workflow.add_edge("resume_agent", "resume_rewrite_agent")
+    workflow.add_edge("resume_rewrite_agent", "skill_agent")
+    workflow.add_edge("skill_agent", "interview_agent")
+    workflow.add_edge("interview_agent", "job_match_agent")
+    workflow.add_edge("job_match_agent", "final_agent")
+    workflow.add_edge("final_agent", END)
+
+    return workflow.compile()

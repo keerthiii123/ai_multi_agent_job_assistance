@@ -1,0 +1,11 @@
+streamlit
+langgraph
+langchain
+langchain-google-genai
+langchain-chroma
+chromadb
+fastapi
+uvicorn
+python-dotenv
+pymupdf
+langgraph
