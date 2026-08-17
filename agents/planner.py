@@ -29,18 +29,26 @@ def planner_agent(state: AgentState):
         "cv",
         "profile",
         "analyze my resume",
-        "review my resume"
+        "review my resume",
+        "resume analysis"
     ]
 
-    if any(
+    resume_requested = any(
         keyword in user_query
         for keyword in resume_keywords
-    ):
+    )
+
+
+    if resume_requested:
+
         plan.append("resume_agent")
+
+        # Resume rewrite is useful when resume analysis is requested
+        plan.append("resume_rewrite_agent")
 
 
     # =====================================================
-    # SKILL GAP ANALYSIS
+    # SKILL GAP
     # =====================================================
 
     skill_keywords = [
@@ -61,14 +69,15 @@ def planner_agent(state: AgentState):
 
 
     # =====================================================
-    # INTERVIEW PREPARATION
+    # INTERVIEW
     # =====================================================
 
     interview_keywords = [
         "interview",
         "interview questions",
         "prepare interview",
-        "prepare for interview"
+        "prepare for interview",
+        "interview preparation"
     ]
 
     if any(
@@ -81,7 +90,7 @@ def planner_agent(state: AgentState):
 
 
     # =====================================================
-    # JOB MATCH ANALYSIS
+    # JOB MATCH
     # =====================================================
 
     job_match_keywords = [
@@ -96,11 +105,6 @@ def planner_agent(state: AgentState):
     ]
 
 
-    # =====================================================
-    # IF JOB DESCRIPTION IS PROVIDED
-    # AUTOMATICALLY RUN SKILL GAP + JOB MATCH
-    # =====================================================
-
     if job_description:
 
         if "skill_agent" not in plan:
@@ -108,11 +112,6 @@ def planner_agent(state: AgentState):
 
         if "job_match_agent" not in plan:
             plan.append("job_match_agent")
-
-
-    # =====================================================
-    # IF USER SPECIFICALLY ASKS FOR JOB MATCH
-    # =====================================================
 
     elif any(
         keyword in user_query
@@ -128,7 +127,28 @@ def planner_agent(state: AgentState):
     # =====================================================
 
     if not plan:
+
         plan.append("resume_agent")
+
+
+    # =====================================================
+    # FINAL REPORT
+    # =====================================================
+
+    # Final report is always useful after the selected analysis.
+    plan.append("final_agent")
+
+
+    # =====================================================
+    # REMOVE DUPLICATES
+    # =====================================================
+
+    unique_plan = []
+
+    for agent in plan:
+
+        if agent not in unique_plan:
+            unique_plan.append(agent)
 
 
     # =====================================================
@@ -136,5 +156,5 @@ def planner_agent(state: AgentState):
     # =====================================================
 
     return {
-        "plan": plan
+        "plan": unique_plan
     }

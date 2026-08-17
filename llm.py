@@ -26,8 +26,8 @@ GEMINI_API_KEY = (
 
 if not GEMINI_API_KEY:
     raise ValueError(
-        f"API key not found.\n"
-        f"Expected .env file at: {ENV_FILE}"
+        "Gemini API key not found. "
+        "Set GEMINI_API_KEY in Streamlit Cloud Secrets."
     )
 
 
@@ -53,7 +53,7 @@ MODEL_NAME = "gemini-3.6-flash"
 
 def invoke_llm(prompt: str) -> str:
 
-    if not prompt:
+    if not prompt or not prompt.strip():
         return ""
 
     try:
@@ -82,5 +82,13 @@ def invoke_llm(prompt: str) -> str:
 
         print("[Gemini] Error:")
         print(error_message)
+
+        # Do NOT retry 429 quota errors.
+        if "429" in error_message or "RESOURCE_EXHAUSTED" in error_message:
+
+            return (
+                "LLM Error: Gemini API quota exceeded. "
+                "Please try again after the quota resets."
+            )
 
         return f"LLM Error: {error_message}"
