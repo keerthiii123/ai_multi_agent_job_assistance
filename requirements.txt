@@ -11,4 +11,5 @@ pymupdf
 pypdf
 google-genai
 reportlab
+python-docx
 
